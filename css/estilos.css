@@ -1,0 +1,24 @@
+*{
+    margin: 15px;
+}
+
+body{
+    background-color: #A498CD;
+}
+
+section{
+    background-color: #F5ECFF;
+    border: 2px dashed black;
+}
+
+h1{
+    color: white;
+}
+
+h2{
+    color: #6A5EC2;
+}
+
+span{
+    color: red;
+}
