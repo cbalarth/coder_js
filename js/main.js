@@ -1,99 +1,191 @@
+const form = document.getElementById("form");
+const formCancha = document.getElementById("formCancha");
+const formFecha = document.getElementById("formFecha");
+const formHora = document.getElementById("formHora");
+const formNombre = document.getElementById("formNombre");
+const formCorreo = document.getElementById("formCorreo");
+
+const precioLUMAMI = 10000;
+const precioJUVI = 15000;
+
+// -----------------------------------------------------
 // 01 - LISTA DE CANCHAS EXISTENTES
-const listaCanchas = [
-    {ID:123, nombre:"LOS CASTAÑOS"},
-    {ID:456, nombre:"LOS ABEDULES"},
-    {ID:789, nombre:"LOS BOLDOS"},
-]
+// -----------------------------------------------------
 
-// 02 - LISTA DE DIAS Y PRECIOS
+// -> 01.a) CREACIÓN
+let listaCanchas = [
+    {ID:123, nombre:"LOS CASTAÑOS", img: "https://mail.cdn.wpchile.com/assets/img-temp/300x300/img1.jpg"},
+    {ID:456, nombre:"LOS ABEDULES", img: "https://mail.cdn.wpchile.com/assets/img-temp/300x300/img2.jpg"},
+    {ID:789, nombre:"LOS BOLDOS", img: "https://mail.cdn.wpchile.com/assets/img-temp/300x300/img3.jpg"},
+]
+// -> 01.b) ORDENAMIENTO ALFABÉTICO
+listaCanchas.sort((a,b) => {
+    if (a.nombre > b.nombre){
+        return 1;
+    } else if (a.nombre < b.nombre){
+        return -1;
+    } else {
+        return 0;
+    }
+})
+
+// -----------------------------------------------------
+// 02 - PUBLICAR CANCHAS EN HTML
+// -----------------------------------------------------
+
+// -> 02.a) SECCION NFORMATIVA
+listaCanchas.forEach(cancha => {
+    let contenedorCancha = document.createElement("div");
+    contenedorCancha.className = "cancha"; //Asigno clase para luego trabajar con todos las canchas.
+    contenedorCancha.setAttribute("ID", cancha.ID); //Asigno id para luego trabajar con la cancha específica.
+    contenedorCancha.innerHTML = `
+        <h3>CANCHA "${cancha.nombre}"</h3>
+        <p>Código = ${cancha.ID}</p>
+        <img src="${cancha.img}">
+        `;
+    document.getElementById("seccionCanchas").append(contenedorCancha);
+})
+
+// -> 02.b) FORMULARIO
+listaCanchas.forEach(cancha => {
+    let opcionCancha = document.createElement("option");
+    opcionCancha.innerHTML = `<option>${cancha.nombre}</option>`;
+    document.getElementById("formCancha").append(opcionCancha);
+})
+
+// -----------------------------------------------------
+// 03 - LISTA DE DÍAS Y PRECIOS
+// -----------------------------------------------------
 const listaDiasPrecios = [
-    {dia:1, nombre:"LUNES", precio:10000},
-    {dia:2, nombre:"MARTES", precio:10000},
-    {dia:3, nombre:"MIERCOLES", precio:10000},
-    {dia:4, nombre:"JUEVES", precio:15000},
-    {dia:5, nombre:"VIERNES", precio:15000},
+    {dia:1, nombre:"LUNES", precio: precioLUMAMI},
+    {dia:2, nombre:"MARTES", precio: precioLUMAMI},
+    {dia:3, nombre:"MIERCOLES", precio: precioLUMAMI},
+    {dia:4, nombre:"JUEVES", precio: precioJUVI},
+    {dia:5, nombre:"VIERNES", precio: precioJUVI},
 ]
 
-// 03 - LISTA DE ARRIENDOS REGISTRADOS
-const listaArriendos = [
-    {arrID:0, arrCorreo:"cbalart96@gmail.com", arrNombre:"Carlos Balart", arrCanchaID:"123", arrCanchaNombre:"LOS CASTAÑOS", arrFecha:"Mon Oct 10 2022", arrHorario:"12:00", arrPrecio:10000}
+// -----------------------------------------------------
+// 04 - PUBLICAR PRECIOS EN HTML
+// -----------------------------------------------------
+
+// -> 04.a) LUNES, MARTES Y MIÉRCOLES
+let contenedorPreciosLUMAMI = document.createElement("p");
+contenedorPreciosLUMAMI.innerHTML = `<p>Arriendo = ${precioLUMAMI} por hora.</p>`;
+document.getElementById("preciosLUMAMI").append(contenedorPreciosLUMAMI);
+
+// -> 04.b) JUEVES Y VIERNES
+let contenedorPreciosJUVI = document.createElement("p");
+contenedorPreciosJUVI.innerHTML = `<p>Arriendo = ${precioJUVI} por hora.</p>`;
+document.getElementById("preciosJUVI").append(contenedorPreciosJUVI);
+
+// -----------------------------------------------------
+// 05 - LISTA GLOBAL DE ARRIENDOS
+// -----------------------------------------------------
+const listaGlobalArriendos = [
+    {arrID:0, arrCorreo:"cbalart96@gmail.com", arrNombre:"Carlos Balart", arrCanchaID:"456", arrCanchaNombre:"LOS ABEDULES", arrFecha:"2022-10-24", arrHora:"12:00", arrPrecio:10000},
+    {arrID:1, arrCorreo:"cbalart96@gmail.com", arrNombre:"Carlos Balart", arrCanchaID:"456", arrCanchaNombre:"LOS ABEDULES", arrFecha:"2022-10-25", arrHora:"12:00", arrPrecio:10000},
 ];
 
-// 04 - CONSTRUCTOR PARA REGISTRAR UN ARRIENDO
+// -----------------------------------------------------
+// 06 - LISTA PERSONAL DE ARRIENDOS
+// -----------------------------------------------------
+const listaPersonalArriendos = JSON.parse(localStorage.getItem("miagenda")) || [];
+
+// -----------------------------------------------------
+// 07 - CONSTRUCTOR PARA REGISTRAR UN ARRIENDO
+// -----------------------------------------------------
 class arriendo{
-    constructor(arrID, arrCorreo, arrNombre, arrCanchaID, arrCanchaNombre, arrFecha, arrHorario, arrPrecio){
+    constructor(arrID, arrCorreo, arrNombre,arrCanchaID, arrCanchaNombre, arrFecha, arrHora, arrPrecio){
         this.arrID = arrID;
         this.arrCorreo = arrCorreo;
         this.arrNombre = arrNombre;
         this.arrCanchaID = arrCanchaID;
         this.arrCanchaNombre = arrCanchaNombre;
         this.arrFecha = arrFecha;
-        this.arrHorario = arrHorario;
+        this.arrHora = arrHora;
         this.arrPrecio = arrPrecio;
     }
 }
 
-// 05 - MOSTRAR CANCHAS ORDENADAS ALFABÉTICAMENTE POR NOMBRE
-function mostrarCanchasAZ(){
-    listaCanchas.sort((a,b) => {
-        if (a.nombre > b.nombre){
-            return 1;
-        } else if (a.nombre < b.nombre){
-            return -1;
-        } else {
-            return 0;
-        }
-    })
-    listaCanchas.forEach(cancha => alert(`Cancha "${cancha.nombre}", código ${cancha.ID}.`));
-}
+// -----------------------------------------------------
+// 08 - SISTEMA DE ARRIENDO
+// -----------------------------------------------------
+form.onsubmit = (evento)=> {
+    evento.preventDefault();
 
-// 06 - SISTEMA DE ARRIENDO
-function Arrendar(){  
-    // a) SELECCION DE CANCHA
-    let varIDCancha = document.forms["Form"]["varA"].value;
-    let validarCancha = listaCanchas.some(cancha => cancha.ID == varIDCancha); //True = Se escoge cancha con código existente.
-    while(validarCancha == false){
-        alert("CÓDIGO DE CANCHA INCORRECTO O NO DISPONIBLE");
-        varIDCancha = prompt("Ingrese un código de cancha válido:");
-        validarCancha = listaCanchas.some(cancha => cancha.ID == varIDCancha); //True = Se escoge cancha con código existente.
+// -> 08.a) VALIDACIÓN DÍA
+    let diaSemana = (new Date(formFecha.value).getDay())+1;
+    let validarDia = listaDiasPrecios.some(i => i.dia == diaSemana); //True = Se escoge dia entre lunes (1) y viernes (5).
+    if (validarDia == false){
+        Toastify({
+            text: "ERROR 01: DÍA INCORRECTO",
+            duration: 15000,
+            close: false,
+            gravity: "top",
+            position: "right",
+        }).showToast();
     }
-    let objetoSeleccionCancha = listaCanchas.find(cancha => cancha.ID == varIDCancha);
-    alert(`CANCHA SELECCIONADA: ${objetoSeleccionCancha.nombre}`);
 
-    // b) SELECCION DE DIA
-    let varFecha = new Date(document.forms["Form"]["varB"].value);
-    let diaSemana = varFecha.getDay();
-    let validarDia = listaDiasPrecios.some(i => i.dia == diaSemana); //True = Se escoge dia entre lunes y viernes.
-    while(validarDia == false){
-        alert("DÍA INCORRECTO O NO DISPONIBLE");
-        varFecha = new Date(prompt("Ingrese una fecha válida (aaaa/mm/dd): "));
-        diaSemana = varFecha.getDay();
-        validarDia = listaDiasPrecios.some(i => i.dia == diaSemana); //True = Se escoge dia entre lunes y viernes.
+// -> 08.b) VALIDACIÓN HORA
+    let hora = Number(formHora.value[0]+formHora.value[1]);
+    let minutos = Number(formHora.value[3]+formHora.value[4]);
+    let validarHora = ((minutos==0) && (hora>=9) && (hora<=22)); //True= Se escoge hora cerrada entre 9 y 22.
+    if(validarHora == false) {
+        Toastify({
+            text: "ERROR 02: HORA INCORRECTA",
+            duration: 15000,
+            close: false,
+            gravity: "top",
+            position: "right",
+        }).showToast();
     }
-    let seleccionDia = varFecha.toDateString();
-    let objetoSeleccionPrecio = listaDiasPrecios.find(i => i.dia == diaSemana);
-    alert(`DIA SELECCIONADO: ${seleccionDia}`);
 
-    //c) SELECCION DE HORA
-    let varHorario = document.forms["Form"]["varC"].value;
-    hora = Number(varHorario[0]+varHorario[1]);
-    minutos = Number(varHorario[3]+varHorario[4]);
-    let validarDisponibilidad = listaArriendos.some(i => (i.arrCanchaID == varIDCancha) && (i.arrFecha == seleccionDia) && (i.arrHorario == varHorario)); //False = Existe disponibilidad para esa cancha en ese día y hora.
-    while((minutos!=0) || (hora<9) || (hora>22) || (validarDisponibilidad == true)){
-        alert("HORARIO INCORRECTO O NO DISPONIBLE");
-        varHorario = prompt("Ingrese un horario válido (hh:00):");
-        hora = Number(varHorario[0]+varHorario[1]);
-        minutos = Number(varHorario[3]+varHorario[4]);
-        validarDisponibilidad = listaArriendos.some(i => (i.arrCanchaID == varIDCancha) && (i.arrFecha == seleccionDia) && (i.arrHorario == varHorario)); //False = Existe disponibilidad para esa cancha en ese día y hora.
+// -> 08.c) VALIDACIÓN OCUPADO
+    let validarOcupado = listaGlobalArriendos.some(i => (i.arrCanchaNombre == formCancha.value) && (i.arrFecha == formFecha.value) && (i.arrHora == formHora.value)); //False = Existe disponibilidad para esa cancha en ese día y hora.
+    if(validarOcupado == true) {
+        Toastify({
+            text: "ERROR 03: CUPO NO DISPONIBLE",
+            duration: 15000,
+            close: false,
+            gravity: "top",
+            position: "right",
+        }).showToast();     
     }
-    let seleccionHorario = varHorario;
-    alert(`HORA SELECCIONADA: ${seleccionHorario}`);
 
-    // d) CONFIRMACIÓN
-    let varNombre = document.forms["Form"]["varD"].value;
-    let varCorreo = document.forms["Form"]["varE"].value;
-    const arriendo1 = new arriendo(1, varCorreo, varNombre, objetoSeleccionCancha.ID, objetoSeleccionCancha.nombre, seleccionDia, seleccionHorario, objetoSeleccionPrecio.precio);
-    listaArriendos.push(arriendo1);
-    alert(`¡Felicidades ${listaArriendos[1].arrNombre}! Hemos confirmado tu solicitud de arriendo de cancha "${listaArriendos[1].arrCanchaNombre}" para el día "${listaArriendos[1].arrFecha}" a las ${listaArriendos[1].arrHorario}.`);
-    alert(`Favor seguir instrucciones enviadas al correo ${listaArriendos[1].arrCorreo} para efectuar pago de ${listaArriendos[1].arrPrecio} pesos chilenos y finalizar tu reserva.`);
+// -> 08.d) VALIDACIONES FALLIDAS: RESETEA FORMULARIO
+    if ((validarDia == false) || (validarHora ==false) || (validarOcupado == true)) {
+        form.reset(); //Limpiar formulario.
+    }
+
+// -> 08.e) VALIDACIONES EXITOSAS: GENERA ARRIENDO
+    if ((validarDia == true) && (validarHora ==true) && (validarOcupado == false)) {
+        
+        let listaids = [];
+        listaGlobalArriendos.forEach(arriendo => {
+            listaids.push(arriendo.arrID);
+        })
+        let resID = Math.max(...listaids)+1;
+
+        let resCanchaID = listaCanchas.find(i => i.nombre == formCancha.value).ID;
+        let resPrecio = listaDiasPrecios.find(i => i.dia == diaSemana).precio;
+
+        const nuevoArriendo = new arriendo(resID, formCorreo.value, formNombre.value, resCanchaID, formCancha.value, formFecha.value, formHora.value, resPrecio);
+        listaGlobalArriendos.push(nuevoArriendo); //Agregar a lista global.
+        listaPersonalArriendos.push(nuevoArriendo); //Agregar a lista personal (Storage).
+        localStorage.setItem("miagenda", JSON.stringify(listaPersonalArriendos));
+
+        Swal.fire(
+            {
+            position: 'center',
+            icon: 'success',
+            title: "ARRIENDO EXITOSO",
+            text: `¡Felicidades ${nuevoArriendo.arrNombre}! Hemos confirmado tu solicitud de arriendo de cancha "${nuevoArriendo.arrCanchaNombre}" para el día "${nuevoArriendo.arrFecha}" a las ${nuevoArriendo.arrHora}. Favor seguir instrucciones enviadas al correo ${nuevoArriendo.arrCorreo} para efectuar pago de $${nuevoArriendo.arrPrecio} pesos chilenos y finalizar tu reserva.`,
+            showConfirmButton: false,
+            timer: 15000,
+            timerProgressBar: true,
+            customClass: {popup: 'contSWAL',},
+        })
+
+        form.reset(); //Limpiar formulario.
+    }
 }
