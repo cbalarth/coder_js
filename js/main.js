@@ -19,7 +19,7 @@ console.log(now.ts);
 // 02 - LISTA DE CANCHAS EXISTENTES
 // -----------------------------------------------------
 
-// -> 02.a) CREACIÓN
+// -> 02.a) CREACIÓN DE ARREGLO
 let listaCanchas = [];
 const crearCanchas = async ()=> {
     try {
@@ -50,7 +50,7 @@ const crearCanchas = async ()=> {
                 `;
             document.getElementById("seccionCanchas").append(contenedorCancha);
         })
-// -> 02.d) PUBLICACIÓN HTML, LISTA PARA FORMULARIO
+// -> 02.d) PUBLICACIÓN HTML, LISTA DESPLEGABLE EN FORMULARIO
         listaCanchas.forEach(cancha => {
             let opcionCancha = document.createElement("option");
             opcionCancha.innerHTML = `<option>${cancha.nombre}</option>`;
