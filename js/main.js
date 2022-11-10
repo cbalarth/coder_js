@@ -13,8 +13,7 @@ const precioJUVI = 15000;
 
 const DateTime = luxon.DateTime;
 let now = DateTime.fromISO(DateTime.now());
-let fechaHoy = now.toLocaleString(DateTime.DATETIME_MED)
-console.log(fechaHoy);
+console.log(now.ts);
 
 // -----------------------------------------------------
 // 02 - LISTA DE CANCHAS EXISTENTES
@@ -127,9 +126,9 @@ form.onsubmit = (evento)=> {
     let hora = Number(formHora.value[0]+formHora.value[1]);
     let fecha1 = DateTime.fromISO(formFecha.value);
     let fecha2 = fecha1.set({hour: hora});
-    let fecha3 = fecha2.toLocaleString(DateTime.DATETIME_MED);
-    console.log(fecha3);
-    let validarFecha = fecha3 >= fechaHoy;
+    console.log(fecha2.ts);
+
+    let validarFecha = fecha2.ts >= now.ts; //True = Se escoge fecha futura.
     if (validarFecha == false){
         Toastify({
             text: "ERROR 01: FECHA PASADA",
@@ -158,7 +157,7 @@ form.onsubmit = (evento)=> {
     let validarHora = ((minutos==0) && (hora>=9) && (hora<=22)); //True= Se escoge hora cerrada entre 9 y 22.
     if(validarHora == false) {
         Toastify({
-            text: "ERROR 03: HORA NO CERRADA",
+            text: "ERROR 03: HORA INCORRECTA",
             duration: 15000,
             close: false,
             gravity: "top",
@@ -170,7 +169,7 @@ form.onsubmit = (evento)=> {
     let validarOcupado = listaGlobalArriendos.some(i => (i.arrCanchaNombre == formCancha.value) && (i.arrFecha == formFecha.value) && (i.arrHora == formHora.value)); //False = Existe disponibilidad para esa cancha en ese día y hora.
     if(validarOcupado == true) {
         Toastify({
-            text: "ERROR 04: CUPO NO DISPONIBLE",
+            text: "ERROR 04: CUPO UTILIZADO",
             duration: 15000,
             close: false,
             gravity: "top",
